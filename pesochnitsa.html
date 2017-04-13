@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Песочница HTML-кодера v0.1.2a</title>
+	<meta http-equiv="content-type" content="text/html" />
+	<meta charset="UTF-8" />
+	<meta name="description" content="HTML coder playground" />
+	<meta name="keywords" content="HTML,CSS,XHTML,XML,JavaScript" />
+	<meta name="author" content="Georgy Yashin, ifi@yandex.ru" />
+<!-- Подключаем jQuery -->	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<!--
+	<script src="jquery.min.js"></script>
+	-->
+<!--
+ВЕРСИЯ ПРИЛОЖЕНИЯ: 0.1.2a 
+ДАТА СОЗДАНИЯ: 09.05.2016
+ДАТА ТЕКУЩЕЙ ВЕРСИИ: 17.12.2016
+АВТОР: Георгий Яшин
+E-mail: ifi@yandex.ru
+--- TODO LIST ---
+* СТАТУС | ЗАДАЧА
+* TBD    | построить для андроида
+* TBD    | автозагрузка рыбы
+* DONE   | добавить кнопки с часто используемыми тегами
+* DONE   | сделать автогенерацию спанов с нужными тегами
+* TBD    | запилить добавление тега в позицию курсора (если это реально)
+* DONE   | запилить скачивание HTML-кода из textarea (без backend-кода)
+--- END TODO LIST ---
+-->
+	<script>
+$(document).ready(function(){
+
+//обработка событий нажатия утилитных кнопок
+$("#parsebtn").click(function(){
+	$("#outh").html($("#inh").val());
+});
+
+$("#clearbtn").click(function(){
+	$("#inh").val("");
+});
+
+$("#clearall").click(function(){
+	$("#inh").val("");
+	$("#outh").html("");
+});
+
+//наиболее часто используемые теги
+var uts=["<a href=''></a>","<b></b>","<h1></h1>","<p></p>","<div></div>"];
+
+//функция-преобразователь спецсимволов
+function escapeHtml(str) {
+  return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+}
+
+//формируем строку с кнопками с тегами
+for(var i=0;i<uts.length;i++)
+{
+	$("#usedtags").append("<span class='mostusedtag' id='ut"+i+"'>"+escapeHtml(uts[i])+"</span>");
+}
+
+//обработчик нажатия кнопки с тегом
+function shandler(i)
+{
+	return function(){
+		$("#inh").val($("#inh").val()+uts[i]);
+	};
+}
+
+//привязка событий нажатия кнопки с тегом
+for(i=0;i<5;i++)
+{
+	$("#ut"+i).click(shandler(i));
+}  
+
+//Сохранение текста из textarea в файл
+//без backend кода
+//решение взято с StackOverflow и немного специализировано под текущую задачу
+var container = document.querySelector('textarea#inh');
+var anchor = document.querySelector('a#savefile');
+
+anchor.onclick = function() {
+    anchor.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(container.value);
+    anchor.download = 'export.html';
+};
+
+});
+	</script>
+	<style type="text/css">
+		div, textarea
+		{		
+			border-radius: 10px;
+		}
+		a
+		{
+			color: blue;
+		}
+		body
+		{
+			background-color: gray;
+			text-align: center;
+			font-family: Tahoma;
+		}
+		h1
+		{
+			font-size: 20px;
+		}
+		h2{
+			font-size: 16px;
+		}
+		#main
+		{
+			background-color: white;
+			border: solid 1px black;
+			text-align: center;
+			//width: 90%;
+			vertical-align: top;
+			padding: 10px;
+			margin: 30px;
+		}
+		.column
+		{
+			background-color: white;
+			width: 50%;
+		}
+		.dleft
+		{
+			float: left;
+		}
+		.dright
+		{
+			float: right;
+		}
+		#inh
+		{
+			border: solid 1px black;
+		}
+		#outh
+		{
+			text-align: left;
+		}
+		button
+		{
+			color: white;
+			font-size: 16px;
+			margin: 5px;
+			padding: 5px;
+			background-color: #5597b4;
+		}
+		button:hover
+		{
+			background-color:#e35885;
+			-webkit-transition: 0.5s;
+			-moz-transition: 0.5s;
+			-o-transition: 0.5s;
+			transition: 0.5s;
+			cursor: pointer;			
+		}
+		#ftr
+		{
+			width: 100%;
+			font-size: 14px;
+		}
+		a:hover
+		{
+			color: red;
+		}
+		.mostusedtag
+		{
+			color: white;
+			font-size: 12px;
+			border-radius: 10px;
+			margin: 5px;
+			padding: 5px;
+			background-color: #5597b4;
+			box-shadow:0 1px 1px #ccc;
+			display: inline-block;
+
+		}
+		.mostusedtag:hover
+		{
+			background-color:#e35885;
+			-webkit-transition: 0.5s;
+			-moz-transition: 0.5s;
+			-o-transition: 0.5s;
+			transition: 0.5s;
+			cursor: pointer;
+		}
+		#usedtags
+		{
+			margin: auto 5px 5px 5px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Песочница HTML-кодера v0.1.2a</h1>
+	<div id="main" align="center">
+		<div class="column dleft"><h2>Исходный HTML-код</h2></div>
+		<div class="column dright"><h2>Результат</h2></div>
+		<div class="column dleft">
+			<span style="text-align:center;font-size: 14px;">Добавить тег</span>
+			<div id="usedtags"></div>
+			<textarea id="inh" rows="25" cols="60"></textarea><br />
+			<button id="parsebtn">Отобразить HTML</button>
+			<button id="clearbtn">Очистить</button>
+			<button id="clearall">Очистить всё</button><br />
+			<a id="savefile" href="#">Сохранить разметку в файл</a>
+		</div>
+		<div class="column dright" id="outh"></div>	
+		<div style="clear:both;"></div>
+		<div align="center">Рыба здесь: <a href="https://yandex.ru/referats/" target="_blank">https://yandex.ru/referats/</a></div>
+	</div>
+		<div id="ftr" align="center">Георгий Яшин, <a href="mailto:ifi@yandex.ru">ifi@yandex.ru</a>, &copy;2016</div>
+</body>
+	
+</html>
